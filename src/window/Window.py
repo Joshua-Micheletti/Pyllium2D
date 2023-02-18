@@ -5,7 +5,7 @@ from pyglet.window import FPSDisplay
 from pyglet import gl
 from pyglet.math import Mat4
 from renderer.Renderer import Renderer
-from shared import models
+from shared import cameras
 
 class Window(pyglet.window.Window):
     def __init__(self, width = 1280, height = 720, resizable = True, min_w = 400, min_h = 300, max_w = 1920, max_h = 1080, renderer = Renderer()):
@@ -29,6 +29,7 @@ class Window(pyglet.window.Window):
     def on_key_press(self, symbol, modifiers):
         if symbol == key.A:
             print('The "A" key was pressed.')
+            cameras["world"].move(1, 0)
         elif symbol == key.LEFT:
             print('The left arrow key was pressed.')
         elif symbol == key.ENTER:
