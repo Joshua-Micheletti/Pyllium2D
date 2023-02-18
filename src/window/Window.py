@@ -4,9 +4,11 @@ from pyglet.window import mouse
 from pyglet.window import FPSDisplay
 from pyglet import gl
 from pyglet.math import Mat4
+from renderer.Renderer import Renderer
+from shared import models
 
 class Window(pyglet.window.Window):
-    def __init__(self, width = 1280, height = 720, resizable = True, min_w = 400, min_h = 300, max_w = 1920, max_h = 1080):
+    def __init__(self, width = 1280, height = 720, resizable = True, min_w = 400, min_h = 300, max_w = 1920, max_h = 1080, renderer = Renderer()):
         self.customContext = gl.Config()
         self.customContext.stencil_size = 8
         self.customContext.aux_buffers = 4
@@ -15,10 +17,13 @@ class Window(pyglet.window.Window):
         self.set_minimum_size(min_w, min_h)
         self.set_maximum_size(max_w, max_h)
         
+        self.renderer = renderer
+        
         self.fps_display = FPSDisplay(self)
         
     def on_draw(self):
         self.clear()
+        self.renderer.render()
         self.fps_display.draw()
 
     def on_key_press(self, symbol, modifiers):
