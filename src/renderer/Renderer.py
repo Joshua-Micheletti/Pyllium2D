@@ -12,8 +12,7 @@ class Renderer():
 
     def render(self):
         global batch
-        # global cameras
+        global cameras
 
-        # with cameras["world"]:
-        batch.draw()
-        # models["triangle"].draw(GL_TRIANGLES)
+        with cameras["world"]:
+            batch.draw()

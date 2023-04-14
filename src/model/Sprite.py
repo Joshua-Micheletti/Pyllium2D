@@ -3,6 +3,10 @@ from termcolor import colored
 import pyglet
 
 class Sprite:
+    """Class for creating sprites and displaying images.\n
+    Sprite()\n
+    Sprite(path)"""
+
     def __init__(self):
         self.texture = None
         self.sprite = None

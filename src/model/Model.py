@@ -3,8 +3,12 @@ from pyglet.graphics.shader import Shader, ShaderProgram
 from pyglet.gl import *
 from termcolor import colored
 
-# Class for handling classing OpenGL models (vertices, shader)
+# Class for handling classic OpenGL models (vertices, shader)
 class Model():
+    """Class for handling classing OpenGL models (vertices, shader).\n
+    Model()\n
+    Model(vertex, colors, vertex_shader_source = "../shader/basic/basic_vert.c", fragment_shader_source = "../shader/basic/basic_frag.c")"""
+
     # default constructor method
     def __init__(self):
         self.vertex_shader = None
