@@ -56,3 +56,9 @@ class Sprite:
         except Exception as e:
             print(colored("Failed to load animation", "red"))
             print(colored(e, "red"))
+
+    def move(self, x, y):
+        self.sprite.update(self.sprite.x + x, self.sprite.y + y)
+        self.x = self.sprite.x
+        self.y = self.sprite.y
+        self.center = (self.sprite.x + (self.sprite.width / 2), self.sprite.y + (self.sprite.height / 2))

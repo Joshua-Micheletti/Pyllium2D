@@ -8,13 +8,6 @@ class Model():
     """Class for handling classing OpenGL models (vertices, shader).\n
     Model(vertex, colors, vertex_shader_source = "../shader/basic/basic_vert.c", fragment_shader_source = "../shader/basic/basic_frag.c")"""
 
-    # default constructor method
-    # def __init__(self):
-    #     self.vertex_shader = None
-    #     self.fragment_shader = None
-    #     self.shader_program = None
-    #     self.vertices = None
-
     # constructor method to fully setup the object
     def __init__(self, vertex, colors, vertex_shader_source = "../shader/basic/basic_vert.c", fragment_shader_source = "../shader/basic/basic_frag.c"):
         self.vertex_shader = None
