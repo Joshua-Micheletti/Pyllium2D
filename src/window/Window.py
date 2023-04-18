@@ -6,10 +6,11 @@ from pyglet import gl
 from pyglet.math import Mat4
 from renderer.Renderer import Renderer
 from controller.Controller import Controller
+from physics.PhysicsWorld import PhysicsWorld
 from shared import cameras
 
 class Window(pyglet.window.Window):
-    def __init__(self, width = 1280, height = 720, resizable = True, min_w = 400, min_h = 300, max_w = 1920, max_h = 1080, renderer = Renderer(), controller = Controller()):
+    def __init__(self, width = 1280, height = 720, resizable = True, min_w = 400, min_h = 300, max_w = 1920, max_h = 1080, renderer = Renderer(), controller = Controller(), physics_world = PhysicsWorld()):
         # self.customContext = gl.Config()
         # self.customContext.stencil_size = 8
         # self.customContext.aux_buffers = 4
@@ -20,12 +21,14 @@ class Window(pyglet.window.Window):
 
         self.renderer = renderer
         self.controller = controller
+        self.physics_world = physics_world
 
         self.fps_display = FPSDisplay(self)
 
     def on_draw(self):
         self.controller.update()
         self.clear()
+        self.physics_world.update(8)
         self.renderer.render()
         self.fps_display.draw()
 

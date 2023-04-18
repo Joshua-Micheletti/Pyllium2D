@@ -1,5 +1,7 @@
 from shared import cameras
 from shared import models
+from shared import groups
+from shared import physics_bodies
 from pyglet.window import key
 from pyglet.window import mouse
 from model.Model import Model
@@ -12,6 +14,18 @@ class Controller:
 
     def __init__(self):
         self.states = dict()
+
+        self.states["camera_left"] = False
+        self.states["camera_right"] = False
+        self.states["camera_up"] = False
+        self.states["camera_down"] = False
+
+        self.states["player_up"] = False
+        self.states["player_down"] = False
+        self.states["player_left"] = False
+        self.states["player_right"] = False
+
+        self.states["display_bounding_box"] = False
 
 
     def handle_key_press(self, symbol, modifiers):
@@ -39,6 +53,17 @@ class Controller:
 
         if symbol == key.RIGHT:
             self.states["player_right"] = True
+
+
+        if symbol == key.B and self.states["display_bounding_box"] == False:
+            self.states["display_bounding_box"] = True
+            groups["debug"].visible = True
+
+        elif symbol == key.B and self.states["display_bounding_box"] == True:
+            self.states["display_bounding_box"] = False
+            groups["debug"].visible = False
+
+
 
 
     def handle_key_release(self, symbol, modifiers):
@@ -110,35 +135,32 @@ class Controller:
 
 
     def update(self):
-        if "camera_left" in self.states:
-            if self.states["camera_left"] == True:
-                cameras["world"].move(-1, 0)
+        if self.states["camera_left"] == True:
+            cameras["world"].move(-1, 0)
 
-        if "camera_right" in self.states:
-            if self.states["camera_right"] == True:
-                cameras["world"].move(1, 0)
+        if self.states["camera_right"] == True:
+            cameras["world"].move(1, 0)
 
-        if "camera_up" in self.states:
-            if self.states["camera_up"] == True:
-                cameras["world"].move(0, 1)
+        if self.states["camera_up"] == True:
+            cameras["world"].move(0, 1)
 
-        if "camera_down" in self.states:
-            if self.states["camera_down"] == True:
-                cameras["world"].move(0, -1)
+        if self.states["camera_down"] == True:
+            cameras["world"].move(0, -1)
 
 
-        if "player_up" in self.states:
-            if self.states["player_up"] == True:
-                models["player"].move(0, 5)
+        if self.states["player_up"] == True:
+            physics_bodies["player"].push(0, 5)
 
-        if "player_down" in self.states:
-            if self.states["player_down"] == True:
-                models["player"].move(0, -5)
+        if self.states["player_down"] == True:
+            physics_bodies["player"].push(0, -5)
 
-        if "player_left" in self.states:
-            if self.states["player_left"] == True:
-                models["player"].move(-5, 0)
+        if self.states["player_left"] == True:
+            physics_bodies["player"].push(-5, 0)
 
-        if "player_right" in self.states:
-            if self.states["player_right"] == True:
-                models["player"].move(5, 0)
+        if self.states["player_right"] == True:
+            physics_bodies["player"].push(5, 0)
+
+
+        for name in physics_bodies.keys():
+            if name in models.keys():
+                models[name].place(physics_bodies[name].x, physics_bodies[name].y)
