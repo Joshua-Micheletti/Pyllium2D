@@ -28,7 +28,7 @@ class Window(pyglet.window.Window):
     def on_draw(self):
         self.controller.update()
         self.clear()
-        self.physics_world.update(8)
+        self.physics_world.update(1)
         self.renderer.render()
         self.fps_display.draw()
 

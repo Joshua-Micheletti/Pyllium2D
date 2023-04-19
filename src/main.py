@@ -16,4 +16,8 @@ if __name__ == "__main__":
     load_scene()
 
     cameras["world"] = CenteredCamera(window, move_speed = 4)
+
+    physics_world.collision_ray_rect(10, 40, 100, -10, 20, 10, 40, 20)
+
+
     pyglet.app.run()
