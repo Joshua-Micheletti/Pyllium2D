@@ -7,7 +7,7 @@ class PhysicsWorld:
         print("new physics world")
         self.collision_solve_speed = 0.01
         self.gravity = 1
-        self.friction = 0.5
+        self.friction = 0.1
 
     def update(self, sub_steps = 1):
         for body in physics_bodies.values():
@@ -22,16 +22,10 @@ class PhysicsWorld:
                 # update the velocity according to the acceleration
                 body.speed = (body.speed[0] + acceleration_x, body.speed[1] + acceleration_y)
 
-# footballers_goals = {'Eusebio': 120, 'Cruyff': 104, 'Pele': 150, 'Ronaldo': 132, 'Messi': 125}
-#
-# sorted_footballers_by_goals = sorted(footballers_goals.items(), key=lambda x:x[1])
-# print(sorted_footballers_by_goals)
-
                 collisions = dict()
 
                 for body_2 in physics_bodies.values():
                     if body_2 != body:
-                        # self.solve_collision(body, body_2)
                         collision_result = self.collision_dynamicRect_rect(body.x, body.y, body.width, body.height, body.speed,
                                                                            body_2.x, body_2.y, body_2.width, body_2.height)
 
@@ -40,9 +34,7 @@ class PhysicsWorld:
                             collisions[list(physics_bodies.keys())[list(physics_bodies.values()).index(body_2)]] = collision_result[4]
 
                 if len(collisions) > 0:
-                    print(collisions)
                     sorted_collisions = sorted(collisions.items(), key = lambda x:x[1])
-                    print(sorted_collisions)
 
                     for collision in sorted_collisions:
                         current_body = physics_bodies[collision[0]]
@@ -59,13 +51,6 @@ class PhysicsWorld:
                 body.y += body.speed[1]
                 # reset the current force on the body
                 body.force = (0, 0)
-
-
-        # for i in range(sub_steps):
-        #     for body_1 in physics_bodies.values():
-        #         for body_2 in physics_bodies.values():
-        #             if body_1 != body_2:
-        #                 self.solve_collision(body_1, body_2)
 
     def solve_collision(self, body_1, body_2):
 

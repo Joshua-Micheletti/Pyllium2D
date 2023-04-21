@@ -36,6 +36,7 @@ def load_scene():
     # models["background"].scale(10)
     models["player"] = Sprite("../res/animation/growlithe.gif", groups["foreground"])
     models["player"].move(300, 300)
+    models["player"].scale(0.5)
     # models["goldeen"] = Sprite("../res/animation/goldeen.gif")
     models["triangle"] = Model((-0.01, -0.01, 0.01, -0.01, 0.0, 0.01), (1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1))
 

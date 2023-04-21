@@ -99,8 +99,8 @@ class Sprite:
     def scale(self, amount):
         self.sprite.update(scale = amount)
         self.scale_amount = amount
-        self.width = self.sprite.width * self.scale_amount
-        self.height = self.sprite.height * self.scale_amount
+        self.width = self.sprite.width
+        self.height = self.sprite.height
         self.center = (self.sprite.x + (self.width / 2), self.sprite.y + (self.height / 2))
 
         self.bounding_box.width = self.width
