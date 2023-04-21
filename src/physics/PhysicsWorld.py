@@ -15,11 +15,45 @@ class PhysicsWorld:
                 # calculate the forces applied on the X and Y components, according to air friction, velocity, mass and gravity
                 totalForceX = body.force[0] + (self.friction * (-body.speed[0]))
                 totalForceY = body.force[1] + (self.friction * (-body.speed[1])) - (body.mass * self.gravity)
+                # totalForceY = body.force[1] + (self.friction * (-body.speed[1]))
                 # calculate the acceleration by the formula: "a = F / m"
                 acceleration_x = totalForceX / body.mass
                 acceleration_y = totalForceY / body.mass
                 # update the velocity according to the acceleration
                 body.speed = (body.speed[0] + acceleration_x, body.speed[1] + acceleration_y)
+
+# footballers_goals = {'Eusebio': 120, 'Cruyff': 104, 'Pele': 150, 'Ronaldo': 132, 'Messi': 125}
+#
+# sorted_footballers_by_goals = sorted(footballers_goals.items(), key=lambda x:x[1])
+# print(sorted_footballers_by_goals)
+
+                collisions = dict()
+
+                for body_2 in physics_bodies.values():
+                    if body_2 != body:
+                        # self.solve_collision(body, body_2)
+                        collision_result = self.collision_dynamicRect_rect(body.x, body.y, body.width, body.height, body.speed,
+                                                                           body_2.x, body_2.y, body_2.width, body_2.height)
+
+                        if not collision_result is None and not collision_result == False:
+                            # collisions[physics_bodies.keys()[physics_bodies.values()]]
+                            collisions[list(physics_bodies.keys())[list(physics_bodies.values()).index(body_2)]] = collision_result[4]
+
+                if len(collisions) > 0:
+                    print(collisions)
+                    sorted_collisions = sorted(collisions.items(), key = lambda x:x[1])
+                    print(sorted_collisions)
+
+                    for collision in sorted_collisions:
+                        current_body = physics_bodies[collision[0]]
+
+                        collision_result = self.collision_dynamicRect_rect(body.x, body.y, body.width, body.height, body.speed,
+                                                                           current_body.x, current_body.y, current_body.width, current_body.height)
+
+                        if not collision_result is None and not collision_result == False:
+                            body.speed = (body.speed[0] + (collision_result[2] * abs(body.speed[0]) * (1 - collision_result[4])), body.speed[1] + collision_result[3] * abs(body.speed[1]) * (1 - collision_result[4]))
+
+
                 # update the position according to the velocity
                 body.x += body.speed[0]
                 body.y += body.speed[1]
@@ -27,11 +61,11 @@ class PhysicsWorld:
                 body.force = (0, 0)
 
 
-        for i in range(sub_steps):
-            for body_1 in physics_bodies.values():
-                for body_2 in physics_bodies.values():
-                    if body_1 != body_2:
-                        self.solve_collision(body_1, body_2)
+        # for i in range(sub_steps):
+        #     for body_1 in physics_bodies.values():
+        #         for body_2 in physics_bodies.values():
+        #             if body_1 != body_2:
+        #                 self.solve_collision(body_1, body_2)
 
     def solve_collision(self, body_1, body_2):
 
@@ -41,11 +75,18 @@ class PhysicsWorld:
         #         distance = Vec2(body_1.center[0], body_1.center[1]) - Vec2(body_2.center[0], body_2.center[1])
         #         body_1.move(distance.x * self.collision_solve_speed, distance.y * self.collision_solve_speed)
 
-        if self.collision_dynamicRect_rect(body_1.x, body_1.y, body_1.width, body_1.height, body_1.speed,
-                                           body_2.x, body_2.y, body_2.width, body_2.height):
-            print("collision")
-            body_1.speed = (0, 0)
-            body_1.force = (0, 0)
+        collision_result = self.collision_dynamicRect_rect(body_1.x, body_1.y, body_1.width, body_1.height, body_1.speed,
+                                                           body_2.x, body_2.y, body_2.width, body_2.height)
+
+        # if not collision_result is None and not collision_result == False:
+            # body_1.speed = (0, 0)
+
+
+
+            # body_1.speed = (body_1.speed[0] + (collision_result[2] * abs(body_1.speed[0]) * (1 - collision_result[4])), body_1.speed[1] + collision_result[3] * abs(body_1.speed[1]) * (1 - collision_result[4]))
+            # print(body_1.speed)
+
+            # body_1.force = (0, 0)
 
 
     def collision_rect_rect(self, r1x, r1y, r1w, r1h, r2x, r2y, r2w, r2h):
@@ -82,6 +123,12 @@ class PhysicsWorld:
 
         # calculate the near and far t values for x and y
         # ADD FIX FOR PARALLEL VECTORS (DIVISION BY 0)
+        if ray_direction_x == 0:
+            ray_direction_x = 0.0001
+
+        if ray_direction_y == 0:
+            ray_direction_y = 0.0001
+
         near_x_t = (rect_x - ray_origin_x) / ray_direction_x
         far_x_t = (rect_x + rect_w - ray_origin_x) / ray_direction_x
 
@@ -120,14 +167,14 @@ class PhysicsWorld:
             print(f"hit_far_t = {hit_far_t}")
 
         # case in which the collision happens behind the vector and past the vector
-        if hit_far_t < 0 or hit_near_t > 1:
+        if hit_far_t < 0 or hit_near_t > 1 or hit_near_t < 0:
             if debug:
                 print("no collision")
             return False
 
         # collision detected
-        if debug:
-            print("collision")
+        # if debug:
+            # print("collision")
 
         # calculate the contact point
         contact_point_x = ray_origin_x + ray_direction_x * hit_near_t
@@ -135,6 +182,9 @@ class PhysicsWorld:
 
         if debug:
             print(f"contact point: ({contact_point_x}, {contact_point_y})")
+
+        contact_normal_x = 0
+        contact_normal_y = 0
 
         # calculate the normal vector of the contact
         if near_x_t > near_y_t:
@@ -152,7 +202,7 @@ class PhysicsWorld:
                 contact_normal_x = 0
                 contact_normal_y = -1
 
-        return((contact_point_x, contact_point_y, contact_normal_x, contact_normal_y))
+        return((contact_point_x, contact_point_y, contact_normal_x, contact_normal_y, hit_near_t))
 
 
     def collision_dynamicRect_rect(self, current_x, current_y, current_w, current_h, current_speed, target_x, target_y, target_w, target_h):
@@ -166,5 +216,7 @@ class PhysicsWorld:
         expanded_target_w = target_w + current_w
         expanded_target_h = target_h + current_h
 
-        if self.collision_ray_rect(current_x + current_w / 2, current_x + current_h / 2, current_speed[0], current_speed[1], expanded_target_x, expanded_target_y, expanded_target_w, expanded_target_h):
-            return(True)
+        collision_result = self.collision_ray_rect(current_x + current_w / 2, current_y + current_h / 2, current_x + current_w / 2 + current_speed[0], current_y + current_h / 2 + current_speed[1], expanded_target_x, expanded_target_y, expanded_target_w, expanded_target_h)
+
+        if not collision_result is None and not collision_result == False:
+            return(collision_result)

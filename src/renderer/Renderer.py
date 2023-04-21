@@ -21,3 +21,4 @@ class Renderer():
 
         with cameras["world"]:
             batch.draw()
+            
