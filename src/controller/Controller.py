@@ -2,6 +2,7 @@ from shared import cameras
 from shared import models
 from shared import groups
 from shared import physics_bodies
+from shared import *
 from pyglet.window import key
 from pyglet.window import mouse
 from model.Model import Model
@@ -148,19 +149,18 @@ class Controller:
             cameras["world"].move(0, -1)
 
 
+        physics_world = get_physics_world()
+
         if self.states["player_up"] == True:
-            physics_bodies["player"].push(0, 5)
+            physics_world.physics_bodies["player"].push(0, 5)
 
         if self.states["player_down"] == True:
-            physics_bodies["player"].push(0, -5)
+            physics_world.physics_bodies["player"].push(0, -5)
 
         if self.states["player_left"] == True:
-            physics_bodies["player"].push(-5, 0)
+            physics_world.physics_bodies["player"].push(-5, 0)
 
         if self.states["player_right"] == True:
-            physics_bodies["player"].push(5, 0)
+            physics_world.physics_bodies["player"].push(5, 0)
 
-
-        for name in physics_bodies.keys():
-            if name in models.keys():
-                models[name].place(physics_bodies[name].x, physics_bodies[name].y)
+        set_physics_world(physics_world)
