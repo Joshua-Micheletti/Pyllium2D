@@ -24,12 +24,16 @@ class Window(pyglet.window.Window):
 
         self.fps_display = FPSDisplay(self)
 
+
     def on_draw(self):
         self.controller.update()
         self.clear()
         get_physics_world().update(1)
         self.renderer.render()
+        cameras["world"].follow(models["player"].x, models["player"].y)
         self.fps_display.draw()
+
+
 
     def on_key_press(self, symbol, modifiers):
         self.controller.handle_key_press(symbol, modifiers)

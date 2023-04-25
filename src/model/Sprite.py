@@ -106,7 +106,7 @@ class Sprite:
                             valid_frame = True
 
                     if valid_frame:
-                        frames.append(pyglet.image.AnimationFrame(self.animation_sequence[(i, j)], duration = 0.5))
+                        frames.append(pyglet.image.AnimationFrame(self.animation_sequence[(i, j)], duration = 0.2))
 
                 self.animations.append(pyglet.image.Animation(frames = frames))
                 self.animations[len(self.animations) - 1].add_to_texture_bin(self.texture_bin)
@@ -133,6 +133,29 @@ class Sprite:
             print(colored("Failed to load image", "red"))
             print(colored(e, "red"))
 
+    def load_texture_region(self, path, group, area_x, area_y, area_w, area_h):
+        try:
+            self.texture = pyglet.image.load(path)
+            self.texture = self.texture.get_region(area_x, area_y, area_w, area_h)
+            self.sprite = pyglet.sprite.Sprite(self.texture, batch = batch, group = group)
+            self.center = (self.sprite.x + (self.sprite.width / 2), self.sprite.y + (self.sprite.height / 2))
+            self.x = self.sprite.x
+            self.y = self.sprite.y
+            self.width = self.sprite.width
+            self.height = self.sprite.height
+            self.source = path
+
+            self.bounding_box = shapes.BorderedRectangle(self.x, self.y,
+                                                         self.width, self.height,
+                                                         border = 20,
+                                                         border_color = (255, 0, 0, 128),
+                                                         color = (0, 0, 0, 128),
+                                                         batch = batch, group = groups["debug"])
+
+        except Exception as e:
+            print(colored("Failed to load image"), "red")
+            print(colored(e, "red"))
+
 
     def set_anchor(self):
         """Set anchor points for animation. Anchor point is set for each individual frame image."""
@@ -140,7 +163,7 @@ class Sprite:
             for animation in self.animations:
                 for f in animation.frames:
                     f.image.anchor_x = f.image.width / 2
-                    # f.image.anchor_y = f.image.anchor_y + f.image.height / 2
+                    f.image.anchor_y = f.image.height / 2
 
         self.texture.anchor_x = self.texture.width / 2
 

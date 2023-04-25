@@ -7,11 +7,33 @@ import pyglet
 from model.Model import Model
 from model.Sprite import Sprite
 from model.dynamic.Player import Player
+from structure.Structure import Structure
 
 def load_scene():
     global models
     global batch
     global physics_world
+
+    world = []
+
+    tile_size = 32
+
+    for i in range(20):
+        world.append([])
+        for j in range(20):
+            world[i].append(-1)
+
+    for i in range(len(world)):
+        for j in range(len(world[i])):
+            models["tile_" + str(i) + "_" + str(j)] = Sprite("../res/structure/Assets.png", groups["background"])
+
+            models["tile_" + str(i) + "_" + str(j)].load_texture_region("../res/structure/Assets.png", groups["background"], 0, 16 * 24, 16, 16)
+
+            models["tile_" + str(i) + "_" + str(j)].place(i * tile_size, j * tile_size)
+
+            models["tile_" + str(i) + "_" + str(j)].scale(2)
+
+    print(world)
 
     # models["car"] = Sprite("../res/texture/test.png")
     # models["gally"] = Sprite("../res/texture/gally5.png")
@@ -55,6 +77,9 @@ def load_scene():
     physics_world.add_body("background7", models["background7"].x, models["background7"].y, models["background7"].width, models["background7"].height, moving = False)
     physics_world.add_body("background8", models["background8"].x, models["background8"].y, models["background8"].width, models["background8"].height, moving = False)
     physics_world.add_body("player", models["player"].x, models["player"].y, models["player"].width, models["player"].height)
+
+    structure = Structure("../res/structure/tree.str")
+
 
     set_physics_world(physics_world)
 
