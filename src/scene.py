@@ -6,6 +6,8 @@ from shared import *
 import pyglet
 from model.Model import Model
 from model.Sprite import Sprite
+from model.TileMap import TileMap
+from model.Tile import Tile
 from model.dynamic.Player import Player
 from structure.Structure import Structure
 
@@ -16,29 +18,22 @@ def load_scene():
 
     world = []
 
-    tile_size = 32
+    tile_size = 64
 
-    for i in range(20):
+    for i in range(100):
         world.append([])
-        for j in range(20):
+        for j in range(200):
             world[i].append(-1)
 
-    for i in range(len(world)):
-        for j in range(len(world[i])):
-            models["tile_" + str(i) + "_" + str(j)] = Sprite("../res/structure/Assets.png", groups["background"])
+    tilemap = TileMap()
 
-            models["tile_" + str(i) + "_" + str(j)].load_texture_region("../res/structure/Assets.png", groups["background"], 0, 16 * 24, 16, 16)
+    tilemap.load_tilemap("../res/structure/Assets.png", 25, 25)
 
-            models["tile_" + str(i) + "_" + str(j)].place(i * tile_size, j * tile_size)
-
-            models["tile_" + str(i) + "_" + str(j)].scale(2)
-
-    print(world)
 
     # models["car"] = Sprite("../res/texture/test.png")
     # models["gally"] = Sprite("../res/texture/gally5.png")
     # models["animation"] = Sprite("../res/animation/savannah-hodgins-idle.gif")
-    models["background"] = Sprite("../res/texture/background.png", groups["background"])
+    # models["background"] = Sprite("../res/texture/background.png", groups["background"])
     models["background1"] = Sprite("../res/texture/background.png", groups["background"])
     models["background2"] = Sprite("../res/texture/background.png", groups["background"])
     models["background3"] = Sprite("../res/texture/background.png", groups["background"])
@@ -63,11 +58,11 @@ def load_scene():
     models["player"].move(300, 300)
     models["player"].scale(2)
     # models["goldeen"] = Sprite("../res/animation/goldeen.gif")
-    models["triangle"] = Model((-0.01, -0.01, 0.01, -0.01, 0.0, 0.01), (1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1))
+    # models["triangle"] = Model((-0.01, -0.01, 0.01, -0.01, 0.0, 0.01), (1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1))
 
     physics_world = get_physics_world()
 
-    physics_world.add_body("background", models["background"].x, models["background"].y, models["background"].width, models["background"].height, moving = False)
+    # physics_world.add_body("background", models["background"].x, models["background"].y, models["background"].width, models["background"].height, moving = False)
     physics_world.add_body("background1", models["background1"].x, models["background1"].y, models["background1"].width, models["background1"].height, moving = False)
     physics_world.add_body("background2", models["background2"].x, models["background2"].y, models["background2"].width, models["background2"].height, moving = False)
     physics_world.add_body("background3", models["background3"].x, models["background3"].y, models["background3"].width, models["background3"].height, moving = False)
@@ -79,6 +74,33 @@ def load_scene():
     physics_world.add_body("player", models["player"].x, models["player"].y, models["player"].width, models["player"].height)
 
     structure = Structure("../res/structure/tree.str")
+
+    map_str = Structure("../res/structure/map.str")
+
+    for i in range(len(map_str.cells)):
+        for j in range(len(map_str.cells[i])):
+            world[i][j] = map_str.cells[i][j]
+
+
+
+    # for i in range(len(structure.cells)):
+    #     for j in range(len(structure.cells[i])):
+    #         world[i][j] = structure.cells[i][j]
+
+    for i in range(len(world)):
+        for j in range(len(world[i])):
+            if world[i][j] != -1:
+                models["world_tile_" + str(i) + "_" + str(j)] = Tile(tilemap.get_by_index(world[i][j]), groups["background"])
+                models["world_tile_" + str(i) + "_" + str(j)].move(j * tile_size, i * tile_size)
+                models["world_tile_" + str(i) + "_" + str(j)].scale(4)
+                physics_world.add_body("world_tile_" + str(i) + "_" + str(j), j * tile_size, i * tile_size, tile_size, tile_size, moving = False)
+
+
+    # models["test_tile"] = Tile(models["tilemap"].get_by_index(460), groups["background"])
+    # # models["test_tile"].move(0, 0)
+    # #
+    # models["test_tile_2"] = Tile(models["tilemap"].images[0][24], groups["background"])
+    # models["test_tile_2"].move(tile_size, tile_size)
 
 
     set_physics_world(physics_world)

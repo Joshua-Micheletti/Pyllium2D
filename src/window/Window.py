@@ -9,6 +9,8 @@ from controller.Controller import Controller
 from shared import cameras
 from shared import *
 
+import time
+
 class Window(pyglet.window.Window):
     def __init__(self, width = 1280, height = 720, resizable = True, min_w = 400, min_h = 300, max_w = 1920, max_h = 1080, renderer = Renderer(), controller = Controller()):
         # self.customContext = gl.Config()
@@ -16,6 +18,9 @@ class Window(pyglet.window.Window):
         # self.customContext.aux_buffers = 4
 
         super().__init__(width, height, resizable = resizable)
+
+        print(self.config)
+
         self.set_minimum_size(min_w, min_h)
         self.set_maximum_size(max_w, max_h)
 
@@ -24,10 +29,13 @@ class Window(pyglet.window.Window):
 
         self.fps_display = FPSDisplay(self)
 
+        self.tick = 1 / 60
+
 
     def on_draw(self):
-        self.controller.update()
+        # print("started rendering")
         self.clear()
+        self.controller.update()
         get_physics_world().update(1)
         self.renderer.render()
         cameras["world"].follow(models["player"].x, models["player"].y)

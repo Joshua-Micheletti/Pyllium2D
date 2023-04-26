@@ -10,7 +10,10 @@ from shared import *
 
 if __name__ == "__main__":
 
-    pyglet.options['degub_graphics_batch'] = False
+    # pyglet.options['degub_graphics_batch'] = False
+    pyglet.options['debug_gl'] = False
+    pyglet.options['vsync'] = True
+
     renderer = Renderer()
     physics_world = PhysicsWorld()
 
@@ -22,7 +25,4 @@ if __name__ == "__main__":
 
     cameras["world"] = FollowCamera(window, move_speed = 4)
 
-    physics_world.collision_ray_rect(10, 40, 100, -10, 20, 10, 40, 20)
-
-
-    pyglet.app.run()
+    pyglet.app.run(interval = 1 / 60)

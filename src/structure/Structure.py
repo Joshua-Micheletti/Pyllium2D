@@ -19,11 +19,12 @@ class Structure:
             self.cells.append([])
 
             for element in elements:
-                self.cells[len(self.cells) - 1].append(element)
+                self.cells[len(self.cells) - 1].append(int(element))
 
             line_count += 1
 
         self.height = line_count
+        self.cells.reverse()
 
     def get_tile(self, x, y):
         return(self.cells[x][y])
