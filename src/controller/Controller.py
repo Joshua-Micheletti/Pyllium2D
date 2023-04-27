@@ -1,10 +1,10 @@
-from shared import cameras
-from shared import models
-from shared import groups
-from shared import physics_bodies
+# from shared import cameras
+# from shared import models
+# from shared import groups
+# from shared import physics_bodies
 from shared import *
-from model.Model import Model
-from model.Sprite import Sprite
+# from mesh.Mesh import Model
+# from mesh.Sprite import Sprite
 
 
 import glfw

@@ -1,24 +1,64 @@
-from shared import models
-from shared import batch
-from shared import groups
-from shared import physics_world
+# from shared import models
+# from shared import batch
+# from shared import groups
+# from shared import physics_world
+# from shared import *
+# import pyglet
+# from mesh.Mesh import Mesh
+# from mesh.Sprite import Sprite
+# from mesh.TileMap import TileMap
+# from mesh.Tile import Tile
+# from shader.Shader import Shader
+# from mesh.dynamic.Player import Player
+# from structure.Structure import Structure
 from shared import *
-import pyglet
-from mesh.Mesh import Mesh
-from mesh.Sprite import Sprite
-from mesh.TileMap import TileMap
-from mesh.Tile import Tile
-from mesh.dynamic.Player import Player
-from structure.Structure import Structure
+from model.Mesh import Mesh
+from model.Shader import Shader
+from model.Texture import Texture
+from model.Model import Model
 
 def load_scene():
     global models
 
-    models["triangle"] = Mesh()
+    shaders["basic"] = Shader()
+    shaders["basic"].compile_program("../shader/basic/basic_vert.c", "../shader/basic/basic_frag.c")
 
-    models["triangle"].load_vertices(-0.5, -0.5, 0.0, 1.0, 0.0, 0.0
-                                      0.5,  0.5, 0.0, 0.0, 1.0, 0.0,
-                                      0.0,  0.5, 0.0, 0.0, 0.0, 1.0)
+    # meshes["triangle"] = Mesh()
+    # meshes["triangle"].load_vertices([-0.5, -0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    #                                    0.5, -0.5, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0,
+    #                                    0.0,  0.5, 0.0, 0.5, 1.0, 0.0, 0.5, 1.0])
+    
+    meshes["square"] = Mesh()
+    meshes["square"].load_vertices([-0.5, -0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                                     0.5, -0.5, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0,
+                                     0.5,  0.5, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0,
+                                    -0.5, -0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                                    -0.5,  0.5, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0,
+                                     0.5,  0.5, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0])
+
+    # meshes["square"] = Mesh()
+    # meshes["square"].load_vertices([-0.5, -0.5, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0,
+    #                                  0.5, -0.5, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0,
+    #                                  0.5,  0.5, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+    #                                 -0.5, -0.5, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0,
+    #                                 -0.5,  0.5, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0,
+    #                                  0.5,  0.5, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0])
+    
+    # meshes["square"] = Mesh()
+    # meshes["square"].load_vertices([-0.5, -0.5, 0.0, 0.0, 0.0, 0.0,
+    #                                  0.5, -0.5, 0.0, 1.0, 0.0, 0.0,
+    #                                  0.5,  0.5, 0.0, 1.0, 1.0, 0.0,
+    #                                 -0.5, -0.5, 0.0, 0.0, 0.0, 0.0,
+    #                                 -0.5,  0.5, 0.0, 0.0, 1.0, 0.0,
+    #                                  0.5,  0.5, 0.0, 1.0, 1.0, 0.0])
+    
+    textures["test"] = Texture()
+    textures["test"].load_image("../res/texture/background.png")
+
+    models["test"] = Model()
+    models["test"].set_mesh("square")
+    models["test"].set_texture("test")
+    models["test"].set_shader("basic")
 
 
     # global models

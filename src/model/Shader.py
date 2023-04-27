@@ -1,8 +1,9 @@
 from OpenGL.GL.shaders import compileProgram, compileShader
+from OpenGL.GL import *
+
 
 class Shader:
-    def __init__():
-        print("new shader")
+    def __init__(self):
         self.program = None
         self.vertex_path = None
         self.fragment_path = None
@@ -16,8 +17,9 @@ class Shader:
         with open(vertex_path, 'r') as f:
             self.vertex_src = f.readlines()
         with open(fragment_path, 'r') as f:
-            self.fragmant_src = f.readlines()
+            self.fragment_src = f.readlines()
 
         self.program = compileProgram(
-            compileShader
+            compileShader(self.vertex_src, GL_VERTEX_SHADER),
+            compileShader(self.fragment_src, GL_FRAGMENT_SHADER)
         )

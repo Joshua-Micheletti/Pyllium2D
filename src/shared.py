@@ -6,6 +6,9 @@ controller = None
 renderer = None
 
 models = dict()
+meshes = dict()
+shaders = dict()
+textures = dict()
 cameras = dict()
 physics_bodies = dict()
 groups = dict()

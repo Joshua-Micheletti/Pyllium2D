@@ -5,8 +5,7 @@ from OpenGL.GL import *
 
 # Class for handling classic OpenGL meshes (vertices, shader)
 class Mesh():
-    """Class for handling classing OpenGL models (vertices, shader).\n
-    Model(vertex, colors, vertex_shader_source = "../shader/basic/basic_vert.c", fragment_shader_source = "../shader/basic/basic_frag.c")"""
+    """Class for handling classic OpenGL models (vertices, shader)"""
 
     def __init__(self):
         self.vertices = None
@@ -22,6 +21,16 @@ class Mesh():
         glBindBuffer(GL_ARRAY_BUFFER, self.vbo)
         glBufferData(GL_ARRAY_BUFFER, self.vertices.nbytes, self.vertices, GL_STATIC_DRAW)
 
+        self.vertex_count = int(len(vertices) / 8)
+
+        glEnableVertexAttribArray(0)
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 32, ctypes.c_void_p(0))
+        glEnableVertexAttribArray(1)
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 32, ctypes.c_void_p(12))
+        glEnableVertexAttribArray(2)
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 32, ctypes.c_void_p(24))
+
+        
 
     def destroy(self):
         glDeleteVertexArrays(1, (self.vao,))

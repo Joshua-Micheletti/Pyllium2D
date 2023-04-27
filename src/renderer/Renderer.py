@@ -1,15 +1,16 @@
-from pyglet.gl import *
-import pyglet
-from shared import models
-from shared import cameras
-from shared import batch
-from shared import groups
-from shared import *
-from mesh.Mesh import Model
-from mesh.dynamic.DynamicSprite import DynamicSprite
-from pyglet.graphics.shader import Shader, ShaderProgram
+# from pyglet.gl import *
+# import pyglet
+# from shared import models
+# from shared import cameras
+# from shared import batch
+# from shared import groups
+# from shared import *
+# # from mesh.Mesh import Model
+# # from mesh.dynamic.DynamicSprite import DynamicSprite
+# from pyglet.graphics.shader import Shader, ShaderProgram
 
 from OpenGL.GL import *
+from shared import *
 
 class Renderer():
     def __init__(self):
@@ -20,8 +21,16 @@ class Renderer():
         # groups["debug"].visible = False
 
     def render(self):
-        
         glClear(GL_COLOR_BUFFER_BIT)
+
+        for model in models.values():
+            textures[model.texture].use()
+            glUseProgram(shaders[model.shader].program)
+            glUniform1i(glGetUniformLocation(shaders[model.shader].program, "texture_image"), 0)
+            glBindVertexArray(meshes[model.mesh].vao)
+            glDrawArrays(GL_TRIANGLES, 0, meshes[model.mesh].vertex_count)
+
+
         # global batch
         # global cameras
 
