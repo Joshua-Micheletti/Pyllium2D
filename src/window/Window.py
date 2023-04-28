@@ -14,6 +14,7 @@ import time
 
 
 import glfw
+from pyrr import Matrix44
 
 class Window():
     def __init__(self, width = 1280, height = 720, name = "Pyllium"):
@@ -21,10 +22,12 @@ class Window():
             return
 
         self.window = glfw.create_window(width, height, name, None, None)
-        
+
         if not self.window:
             glfw.terminate()
             return
+
+        self.projection_matrix = Matrix44.orthogonal_projection(-width/2, width/2, -height/2, height/2, -1, 1)
 
         glfw.set_key_callback(self.window, key_callback);
 
@@ -34,6 +37,8 @@ class Window():
 def key_callback(window, key, scancode, action, mods):
     if action == glfw.PRESS:
         get_controller().handle_key_press(key, mods)
+    if action == glfw.RELEASE:
+        get_controller().handle_key_release(key, mods)
 
 
 

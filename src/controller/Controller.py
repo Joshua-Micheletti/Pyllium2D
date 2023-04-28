@@ -8,6 +8,7 @@ from shared import *
 
 
 import glfw
+import time
 
 class Controller:
     """Class for handling inputs from the user\n
@@ -29,6 +30,8 @@ class Controller:
 
         self.states["display_bounding_box"] = False
 
+        # self.last_update = time.time()
+        # self.tick = 1 / 60
 
         self.player_movement_speed = 1
         self.player_jumping_strength = 30
@@ -146,38 +149,42 @@ class Controller:
 
 
     def update(self):
-        pass
-        # if self.states["camera_left"] == True:
-        #     cameras["world"].move(-self.camera_movement_speed, 0)
+        # if time.time() < self.last_update + self.tick:
+        #     return
 
-        # if self.states["camera_right"] == True:
-        #     cameras["world"].move(self.camera_movement_speed, 0)
+        # self.last_update += self.tick
 
-        # if self.states["camera_up"] == True:
-        #     cameras["world"].move(0, self.camera_movement_speed)
+        if self.states["camera_left"] == True:
+            cameras["world"].move(-self.camera_movement_speed, 0)
 
-        # if self.states["camera_down"] == True:
-        #     cameras["world"].move(0, -self.camera_movement_speed)
+        if self.states["camera_right"] == True:
+            cameras["world"].move(self.camera_movement_speed, 0)
+
+        if self.states["camera_up"] == True:
+            cameras["world"].move(0, self.camera_movement_speed)
+
+        if self.states["camera_down"] == True:
+            cameras["world"].move(0, -self.camera_movement_speed)
 
 
-        # physics_world = get_physics_world()
+        physics_world = get_physics_world()
 
-        # # if self.states["player_up"] == True:
-        # #     physics_world.physics_bodies["player"].push(0, self.player_movement_speed)
+        if self.states["player_up"] == True:
+            physics_world.physics_bodies["player"].push(0, self.player_movement_speed * 3)
 
-        # if self.states["player_down"] == True:
-        #     # physics_world.physics_bodies["player"].push(0, -self.player_movement_speed)
-        #     models["player"].states["crouching"] = True
+        if self.states["player_down"] == True:
+            physics_world.physics_bodies["player"].push(0, -self.player_movement_speed)
+            # models["player"].states["crouching"] = True
         # else:
-        #     models["player"].states["crouching"] = False
+            # models["player"].states["crouching"] = False
 
-        # if self.states["player_left"] == True:
-        #     physics_world.physics_bodies["player"].push(-self.player_movement_speed, 0)
+        if self.states["player_left"] == True:
+            physics_world.physics_bodies["player"].push(-self.player_movement_speed, 0)
 
-        # if self.states["player_right"] == True:
-        #     physics_world.physics_bodies["player"].push(self.player_movement_speed, 0)
+        if self.states["player_right"] == True:
+            physics_world.physics_bodies["player"].push(self.player_movement_speed, 0)
 
-        # if self.states["player_jumping"] == True and get_physics_world().physics_bodies["player"].touching["down"]:
+        # if self.states["player_jumping"] == True and physics_world.physics_bodies["player"].touching["down"]:
         #     physics_world.physics_bodies["player"].push(0, self.player_jumping_strength)
 
-        # set_physics_world(physics_world)
+        set_physics_world(physics_world)

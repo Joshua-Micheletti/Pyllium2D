@@ -12,8 +12,30 @@ class Mesh():
         self.vertex_count = None
         self.vao = None
         self.vbo = None
+        self.width = 0
+        self.height = 0
 
     def load_vertices(self, vertices):
+        numbers_per_vertex = 8
+
+        min_x = 2
+        max_x = -2
+        min_y = 2
+        max_y = -2
+
+        for i in range(int(len(vertices) / numbers_per_vertex)):
+            if vertices[i*numbers_per_vertex] > max_x:
+                max_x = vertices[i*numbers_per_vertex]
+            if vertices[i*numbers_per_vertex] < min_x:
+                min_x = vertices[i*numbers_per_vertex]
+            if vertices[i*numbers_per_vertex + 1] > max_y:
+                max_y = vertices[i*numbers_per_vertex + 1]
+            if vertices[i*numbers_per_vertex + 1] < min_y:
+                min_y = vertices[i*numbers_per_vertex + 1]
+
+        self.width = max_x - min_x
+        self.height = max_y - min_y
+
         self.vertices = np.array(vertices, dtype=np.float32)
         self.vao = glGenVertexArrays(1)
         glBindVertexArray(self.vao)
@@ -29,8 +51,6 @@ class Mesh():
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 32, ctypes.c_void_p(12))
         glEnableVertexAttribArray(2)
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 32, ctypes.c_void_p(24))
-
-        
 
     def destroy(self):
         glDeleteVertexArrays(1, (self.vao,))

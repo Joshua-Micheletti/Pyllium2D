@@ -11,10 +11,11 @@
 
 from OpenGL.GL import *
 from shared import *
+from pyrr import Matrix44
 
 class Renderer():
     def __init__(self):
-        glClearColor(0.5, 0.5, 0.5, 1.0)
+        glClearColor(0.1, 0.1, 0.1, 1.0)
         # groups["background"] = pyglet.graphics.Group(order = 0)
         # groups["foreground"] = pyglet.graphics.Group(order = 1)
         # groups["debug"] = pyglet.graphics.Group(order = 2)
@@ -27,6 +28,9 @@ class Renderer():
             textures[model.texture].use()
             glUseProgram(shaders[model.shader].program)
             glUniform1i(glGetUniformLocation(shaders[model.shader].program, "texture_image"), 0)
+            glUniformMatrix4fv(glGetUniformLocation(shaders[model.shader].program, "view"), 1, GL_FALSE, cameras["world"].view_matrix)
+            glUniformMatrix4fv(glGetUniformLocation(shaders[model.shader].program, "model"), 1, GL_FALSE, model.model_matrix)
+            glUniformMatrix4fv(glGetUniformLocation(shaders[model.shader].program, "projection"), 1, GL_FALSE, get_window().projection_matrix)
             glBindVertexArray(meshes[model.mesh].vao)
             glDrawArrays(GL_TRIANGLES, 0, meshes[model.mesh].vertex_count)
 
@@ -66,6 +70,3 @@ class Renderer():
 
         # with cameras["world"]:
         #     batch.draw()
-
-        
-        
