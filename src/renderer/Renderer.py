@@ -16,10 +16,8 @@ from pyrr import Matrix44
 class Renderer():
     def __init__(self):
         glClearColor(0.1, 0.1, 0.1, 1.0)
-        # groups["background"] = pyglet.graphics.Group(order = 0)
-        # groups["foreground"] = pyglet.graphics.Group(order = 1)
-        # groups["debug"] = pyglet.graphics.Group(order = 2)
-        # groups["debug"].visible = False
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
     def render(self):
         glClear(GL_COLOR_BUFFER_BIT)

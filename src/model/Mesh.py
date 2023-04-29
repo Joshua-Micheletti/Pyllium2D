@@ -8,6 +8,7 @@ class Mesh():
     """Class for handling classic OpenGL models (vertices, shader)"""
 
     def __init__(self):
+        self.formatted_vertices = None
         self.vertices = None
         self.vertex_count = None
         self.vao = None
@@ -16,6 +17,8 @@ class Mesh():
         self.height = 0
 
     def load_vertices(self, vertices):
+        self.vertices = vertices
+
         numbers_per_vertex = 8
 
         min_x = 2
@@ -36,14 +39,20 @@ class Mesh():
         self.width = max_x - min_x
         self.height = max_y - min_y
 
-        self.vertices = np.array(vertices, dtype=np.float32)
+        self.vertex_count = int(len(self.vertices) / 8)
+
+        self.generate_ogl_buffers()
+
+
+    def generate_ogl_buffers(self):
+        self.destroy()
+
+        self.formatted_vertices = np.array(self.vertices, dtype=np.float32)
         self.vao = glGenVertexArrays(1)
         glBindVertexArray(self.vao)
         self.vbo = glGenBuffers(1)
         glBindBuffer(GL_ARRAY_BUFFER, self.vbo)
-        glBufferData(GL_ARRAY_BUFFER, self.vertices.nbytes, self.vertices, GL_STATIC_DRAW)
-
-        self.vertex_count = int(len(vertices) / 8)
+        glBufferData(GL_ARRAY_BUFFER, self.formatted_vertices.nbytes, self.formatted_vertices, GL_STATIC_DRAW)
 
         glEnableVertexAttribArray(0)
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 32, ctypes.c_void_p(0))
@@ -53,78 +62,29 @@ class Mesh():
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 32, ctypes.c_void_p(24))
 
     def destroy(self):
-        glDeleteVertexArrays(1, (self.vao,))
-        glDeleteBuffers(1, (self.vbo,))
+        if self.vao is not None:
+            glDeleteVertexArrays(1, (self.vao,))
+        if self.vbo is not None:
+            glDeleteBuffers(1, (self.vbo,))
 
-    # constructor method to fully setup the object
-    # def __init__(self, vertex, colors, vertex_shader_source = "../shader/basic/basic_vert.c", fragment_shader_source = "../shader/basic/basic_frag.c"):
-    #     self.vertex_shader = None
-    #     self.fragment_shader = None
-    #     self.shader_program = None
-    #     self.vertices = None
+    
+class SquareMesh(Mesh):
 
-    #     self.create_shader(vertex_shader_source, fragment_shader_source)
-    #     self.set_vertices(vertex, colors)
+    def __init__(self):
+        super().__init__()
 
-    # # method for setting the vertex shader from a file path
-    # def set_vertex_shader(self, vertex_shader_source):
-    #     try:
-    #         vert = open(vertex_shader_source)
-    #         self.vertex_shader = Shader(vert.read(), 'vertex')
-    #         vert.close()
-    #         return(1)
-
-    #     except Exception as e:
-    #         print(colored("Vertex file open error", "red"))
-    #         print(colored(e, "red"))
-    #         return(0)
-
-    # # method for setting the fragment shader from a file path
-    # def set_fragment_shader(self, fragment_shader_source):
-    #     try:
-    #         frag = open(fragment_shader_source)
-    #         self.fragment_shader = Shader(frag.read(), 'fragment')
-    #         frag.close()
-    #         return(1)
-
-    #     except Exception as e:
-    #         print(colored("Fragment file open error", "red"))
-    #         print(colored(e, "red"))
-    #         return(0)
-
-    # # method for creating the shader object from the vertex and fragment shader
-    # def create_shader(self, vertex_shader_source = "../shader/basic/basic_vert.c", fragment_shader_source = "../shader/basic/basic_frag.c"):
-    #     if not self.set_vertex_shader(vertex_shader_source):
-    #         return(0)
-
-    #     if  not self.set_fragment_shader(fragment_shader_source):
-    #         return(0)
-
-    #     self.shader_program = ShaderProgram(self.vertex_shader, self.fragment_shader)
-
-    # # method for passing the vertices to the shader object
-    # def set_vertices(self, vertex, colors):
-    #     if self.shader_program == None:
-    #         print(colored("Shader program not initialized", "red"))
-    #         return(0)
-
-    #     if len(vertex) % 2 != 0:
-    #         print(colored("Vertices count isn't a multiple of 2", "red"))
-    #         return(0)
-
-    #     if len(colors) % 4 != 0:
-    #         print(colored("Colors count isn't a multiple of 4", "red"))
-    #         return(0)
-
-    #     if len(vertex) / 2 != len(colors) / 4:
-    #         print(colored("Vertices - Colors mismatch", "red"))
-    #         return(0)
-
-    #     self.vertices = self.shader_program.vertex_list(int(len(vertex) / 2), GL_TRIANGLES, batch = batch)
-    #     self.vertices.position = vertex
-    #     self.vertices.colors = colors
-
-
-    # def create_model(self, vertex, colors, vertex_shader_source = "../shader/basic/basic_vert.c", fragment_shader_source = "../shader/basic/basic_frag.c"):
-    #     self.create_shader(vertex_shader_source, fragment_shader_source)
-    #     self.set_vertices(vertex, colors)
+        self.load_vertices([-0.5, -0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                             0.5, -0.5, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0,
+                             0.5,  0.5, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0,
+                            -0.5, -0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                            -0.5,  0.5, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0,
+                             0.5,  0.5, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0])
+        
+    def set_uv(self, x, y, w, h):
+        self.load_vertices([-0.5, -0.5, 0.0, 0.0, 0.0, 0.0, x  , y,
+                             0.5, -0.5, 0.0, 1.0, 0.0, 0.0, x+w, y,
+                             0.5,  0.5, 0.0, 1.0, 1.0, 0.0, x+w, y+h,
+                            -0.5, -0.5, 0.0, 0.0, 0.0, 0.0, x  , y,
+                            -0.5,  0.5, 0.0, 0.0, 1.0, 0.0, x  , y+h,
+                             0.5,  0.5, 0.0, 1.0, 1.0, 0.0, x+w, y+h])
+        

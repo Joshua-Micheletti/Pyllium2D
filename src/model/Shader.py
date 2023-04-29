@@ -3,12 +3,15 @@ from OpenGL.GL import *
 
 
 class Shader:
-    def __init__(self):
+    def __init__(self, vertex_path = "", fragment_path = ""):
         self.program = None
         self.vertex_path = None
         self.fragment_path = None
         self.vertex_src = None
         self.fragment_src = None
+
+        if len(vertex_path) != 0 and len(fragment_path) != 0:
+            self.compile_program(vertex_path, fragment_path)
 
     def compile_program(self, vertex_path, fragment_path):
         self.vertex_path = vertex_path

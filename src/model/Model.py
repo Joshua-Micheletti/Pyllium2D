@@ -26,7 +26,6 @@ class Model:
         if mesh_obj is not None:
             self.set_mesh(mesh, mesh_obj)
         if texture_obj is not None:
-            print("texture yay")
             self.set_texture(texture, texture_obj)
 
     def calculate_model_matrix(self):
@@ -44,8 +43,8 @@ class Model:
 
     def set_texture(self, texture, texture_obj):
         self.texture = texture
-        self.texture_width = texture_obj.width
-        self.texture_height = texture_obj.height
+        self.texture_width = texture_obj.get_size()[0]
+        self.texture_height = texture_obj.get_size()[1]
 
         self.scale(self.texture_width, self.texture_height)
 
@@ -76,3 +75,5 @@ class Model:
         self.x = x
         self.y = y
         self.calculate_model_matrix()
+
+

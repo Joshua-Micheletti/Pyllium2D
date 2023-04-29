@@ -8,6 +8,7 @@ import glfw
 from OpenGL.GL import *
 from window.Window import Window
 from utils import *
+from model.animation.Animation import Animation
 
 import time
 
@@ -33,29 +34,32 @@ def main():
 
     # Loop until the user closes the window
     while not glfw.window_should_close(get_window().window):
+        starting_time = time.time()
+
         if time.time() > last_update + tick:
             last_update += tick
-
-            starting_time = time.time()
-
-            get_controller().update()
+            get_controller().update(tick)
             get_physics_world().update(1)
             link_all_model_physics_body()
+
+            for model in models.values():
+                if isinstance(model, Animation):
+                    model.update()
 
         get_renderer().render()
 
         finish_time = time.time()
-        elapsed_time = finish_time - starting_time
+        elapsed_time = finish_time - starting_time        
 
-        if elapsed_time != 0:
-            print(1 / elapsed_time)
-        else:
-            print("inf")
         # Swap front and back buffers
         glfw.swap_buffers(get_window().window)
         # Poll for and process events
         glfw.poll_events()
 
+        if elapsed_time != 0:
+            print(1 / elapsed_time)
+        else:
+            print("inf")
 
             # print(1 / (finish_time - starting_time))
 
