@@ -10,7 +10,7 @@ class Frame():
     def set_uv(self, u, v):
         self.u = u
         self.v = v
-    
+
     def set_duration(self, t):
         self.t = t
 
@@ -25,26 +25,32 @@ class Animation(Model):
         self.current_animation = 0
         self.current_frame = 0
         self.last_update = time.time()
+        self.flipped_x = False
 
         for i in range(texture_obj.rows):
             self.frames.append([])
-
             for j in range(texture_obj.columns):
                 uvs = texture_obj.get_uv(i, j)
-                self.frames[i].append(Frame(uvs[0], uvs[1], 0.2))
+
+                if uvs is not False:
+                    self.frames[i].append(Frame(uvs[0], uvs[1], 0.2))
 
         self.play_animation(0)
-    
-    def play_animation(self, index):
+
+    def play_animation(self, index, flipped_x = False):
+        if self.current_animation == index and flipped_x == self.flipped_x:
+            return
+
+        self.flipped_x = flipped_x
         self.current_animation = index
         self.current_frame = 0
-        self.last_update = time.time()
+        self.last_update = time.time() - self.frames[self.current_animation][self.current_frame].t
 
     def update(self):
         current_time = time.time()
         current_frame_obj = self.frames[self.current_animation][self.current_frame]
 
         if current_time > self.last_update + current_frame_obj.t:
-            self.mesh_obj.set_uv(current_frame_obj.u, current_frame_obj.v, self.texture_obj.tile_uv_width, self.texture_obj.tile_uv_height)
+            self.mesh_obj.set_uv(current_frame_obj.u, current_frame_obj.v, self.texture_obj.tile_uv_width, self.texture_obj.tile_uv_height, flipped_x = self.flipped_x)
             self.last_update = time.time()
-            self.current_frame = (self.current_frame + 1) % self.texture_obj.columns
+            self.current_frame = (self.current_frame + 1) % len(self.frames[self.current_animation])

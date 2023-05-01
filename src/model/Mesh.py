@@ -67,7 +67,7 @@ class Mesh():
         if self.vbo is not None:
             glDeleteBuffers(1, (self.vbo,))
 
-    
+
 class SquareMesh(Mesh):
 
     def __init__(self):
@@ -79,12 +79,24 @@ class SquareMesh(Mesh):
                             -0.5, -0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                             -0.5,  0.5, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0,
                              0.5,  0.5, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0])
-        
-    def set_uv(self, x, y, w, h):
+
+    def set_uv(self, x, y, w, h, flipped_x = False, flipped_y = False):
+        w_coord = x+w
+        h_coord = y+h
+
+        if flipped_x:
+            tmp = x
+            x = w_coord
+            w_coord = tmp
+
+        if flipped_y:
+            tmp = y
+            y = h_coord
+            h_coord = tmp
+
         self.load_vertices([-0.5, -0.5, 0.0, 0.0, 0.0, 0.0, x  , y,
-                             0.5, -0.5, 0.0, 1.0, 0.0, 0.0, x+w, y,
-                             0.5,  0.5, 0.0, 1.0, 1.0, 0.0, x+w, y+h,
+                             0.5, -0.5, 0.0, 1.0, 0.0, 0.0, w_coord, y,
+                             0.5,  0.5, 0.0, 1.0, 1.0, 0.0, w_coord, h_coord,
                             -0.5, -0.5, 0.0, 0.0, 0.0, 0.0, x  , y,
-                            -0.5,  0.5, 0.0, 0.0, 1.0, 0.0, x  , y+h,
-                             0.5,  0.5, 0.0, 1.0, 1.0, 0.0, x+w, y+h])
-        
+                            -0.5,  0.5, 0.0, 0.0, 1.0, 0.0, x  , h_coord,
+                             0.5,  0.5, 0.0, 1.0, 1.0, 0.0, w_coord, h_coord])

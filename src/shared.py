@@ -10,7 +10,9 @@ meshes = dict()
 shaders = dict()
 textures = dict()
 cameras = dict()
-groups = dict()
+
+entities = dict()
+
 batch = pyglet.graphics.Batch()
 
 def set_physics_world(obj):

@@ -1,11 +1,4 @@
-# from shared import cameras
-# from shared import models
-# from shared import groups
-# from shared import physics_bodies
 from shared import *
-# from mesh.Mesh import Model
-# from mesh.Sprite import Sprite
-
 
 import glfw
 import time
@@ -30,9 +23,13 @@ class Controller:
 
         self.states["display_bounding_box"] = False
 
-        self.player_movement_speed = 40
+        self.player_movement_speed = 50
         self.player_jumping_strength = 30
         self.camera_movement_speed = 40
+
+        self.can_jump = True
+
+        self.last_update = time.time()
 
 
     def handle_key_press(self, symbol, modifiers):
@@ -145,7 +142,9 @@ class Controller:
 
 
 
-    def update(self, dt):
+    def update(self):
+        dt = time.time() - self.last_update
+        self.last_update = time.time()
 
         if self.states["camera_left"] == True:
             cameras["world"].move(-self.camera_movement_speed * dt, 0)
@@ -163,21 +162,25 @@ class Controller:
         physics_world = get_physics_world()
 
         if self.states["player_up"] == True:
-            physics_world.physics_bodies["player"].push(0, self.player_movement_speed * 3 * dt)
+            physics_world.physics_bodies[entities["player"].body].push(0, self.player_movement_speed * 3 * dt)
 
         if self.states["player_down"] == True:
-            physics_world.physics_bodies["player"].push(0, -self.player_movement_speed * dt)
-            # models["player"].states["crouching"] = True
-        # else:
-            # models["player"].states["crouching"] = False
+            physics_world.physics_bodies[entities["player"].body].push(0, -self.player_movement_speed * dt)
+            entities["player"].states["crouching"] = True
+        else:
+            entities["player"].states["crouching"] = False
 
         if self.states["player_left"] == True:
-            physics_world.physics_bodies["player"].push(-self.player_movement_speed * dt, 0)
+            physics_world.physics_bodies[entities["player"].body].push(-self.player_movement_speed * dt, 0)
 
         if self.states["player_right"] == True:
-            physics_world.physics_bodies["player"].push(self.player_movement_speed * dt, 0)
+            physics_world.physics_bodies[entities["player"].body].push(self.player_movement_speed * dt, 0)
 
-        # if self.states["player_jumping"] == True and physics_world.physics_bodies["player"].touching["down"]:
-        #     physics_world.physics_bodies["player"].push(0, self.player_jumping_strength)
+        if self.states["player_jumping"] == True and physics_world.physics_bodies["player"].touching["down"] and self.can_jump:
+            physics_world.physics_bodies["player"].push(0, self.player_jumping_strength)
+            self.can_jump = False
+
+        if physics_world.physics_bodies["player"].touching["down"] == False:
+            self.can_jump = True
 
         set_physics_world(physics_world)

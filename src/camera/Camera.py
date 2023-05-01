@@ -3,6 +3,7 @@ from pyglet.gl import *
 from pyglet.math import *
 from pyrr import Matrix44
 import numpy as np
+import time
 
 class Camera:
     def __init__(self):
@@ -21,4 +22,22 @@ class Camera:
     def place(self, x, y):
         self.x = x
         self.y = y
+        self.set_view_matrix(self.x, self.y)
+
+
+class FollowCamera(Camera):
+
+    def __init__(self, target = ""):
+        super().__init__()
+        self.delay = 3
+        self.target = target
+        self.last_update = time.time()
+
+
+    def follow(self, target_x, target_y):
+        dt = time.time() - self.last_update
+        self.last_update = time.time()
+
+        self.x += (target_x - self.x) * self.delay * dt
+        self.y += (target_y - self.y) * self.delay * dt
         self.set_view_matrix(self.x, self.y)
