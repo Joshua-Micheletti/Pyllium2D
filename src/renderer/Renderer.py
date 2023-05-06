@@ -1,14 +1,3 @@
-# from pyglet.gl import *
-# import pyglet
-# from shared import models
-# from shared import cameras
-# from shared import batch
-# from shared import groups
-# from shared import *
-# # from mesh.Mesh import Model
-# # from mesh.dynamic.DynamicSprite import DynamicSprite
-# from pyglet.graphics.shader import Shader, ShaderProgram
-
 from OpenGL.GL import *
 from shared import *
 from pyrr import Matrix44
@@ -21,50 +10,41 @@ class Renderer():
 
     def render(self):
         glClear(GL_COLOR_BUFFER_BIT)
-
-        for model in models.values():
-            textures[model.texture].use()
-            glUseProgram(shaders[model.shader].program)
-            glUniform1i(glGetUniformLocation(shaders[model.shader].program, "texture_image"), 0)
-            glUniformMatrix4fv(glGetUniformLocation(shaders[model.shader].program, "view"), 1, GL_FALSE, cameras["world"].view_matrix)
-            glUniformMatrix4fv(glGetUniformLocation(shaders[model.shader].program, "model"), 1, GL_FALSE, model.model_matrix)
-            glUniformMatrix4fv(glGetUniformLocation(shaders[model.shader].program, "projection"), 1, GL_FALSE, get_window().projection_matrix)
-            glBindVertexArray(meshes[model.mesh].vao)
-            glDrawArrays(GL_TRIANGLES, 0, meshes[model.mesh].vertex_count)
+        rm = get_resource_manager()
 
 
-        # global batch
-        # global cameras
+        for order in rm.rendering_buffer.keys():
+            for shader in rm.rendering_buffer[order].keys():
+                if shader == "basic":
+                    basic_shader = rm.shaders["basic"]
 
-        # bodies = get_physics_world().physics_bodies
+                    glUseProgram(basic_shader.program)
+                    glUniform1i(glGetUniformLocation(basic_shader.program, "texture_image"), 0)
+                    glUniformMatrix4fv(glGetUniformLocation(basic_shader.program, "view"), 1, GL_FALSE, cameras["world"].view_matrix)
+                    glUniformMatrix4fv(glGetUniformLocation(basic_shader.program, "projection"), 1, GL_FALSE, get_window().projection_matrix)
 
-        # for name in bodies.keys():
-        #     if name in models.keys():
-        #         models[name].place(bodies[name].x, bodies[name].y)
+                for model in rm.rendering_buffer[order][shader]:
+                    if collision_rect_rect(model.x - model.scale_x / 2, model.y - model.scale_y / 2, model.scale_x, model.scale_y, cameras["world"].x - get_window().width / 2, cameras["world"].y - get_window().height / 2, get_window().width, get_window().height):
+                        rm.textures[model.texture].use()
+                        glUniformMatrix4fv(glGetUniformLocation(rm.shaders[model.shader].program, "model"), 1, GL_FALSE, model.model_matrix)
+                        glBindVertexArray(rm.meshes[model.mesh].vao)
+                        glDrawArrays(GL_TRIANGLES, 0, rm.meshes[model.mesh].vertex_count)
 
-        # for name in models.keys():
-        #     if isinstance(models[name], DynamicSprite):
-        #         models[name].update_state(bodies[name])
-
-            # screen_width = 1280
-            # screen_height = 720
-            # print(name)
-            # if models[name].x >= -cameras["world"].offset_x + screen_width / 2 or models[name].x + models[name].width <= -cameras["world"].offset_x - screen_width / 2 or models[name].y + models[name].height >= -cameras["world"].offset_y + screen_height / 2 or models[name].y <= -cameras["world"].offset_y - screen_height / 2:
-            #     models[name].sprite.group = groups["debug"]
-            # else:
-            #     models[name].sprite.group = groups["background"]
-
-            # int positionX = i * this.tileSize - (this.tileSize * (world.length / 2));
-			# int positionY = j * this.tileSize - (this.tileSize * (world[0].length / 2));
-            #
-			# // check if the current tile is visible by the camera
-			# if (positionX - this.tileSize / 2 >= -this.camera.getX() + this.w / 2 ||
-			# 	positionX + this.tileSize / 2 <= -this.camera.getX() - this.w / 2 ||
-			# 	positionY - this.tileSize / 2 >= -this.camera.getY() + this.h / 2 ||
-			# 	positionY + this.tileSize / 2 <= -this.camera.getY() - this.h / 2) {
-			# }
+        # for model in rm.models.values():
+            # if collision_rect_rect(model.x - model.scale_x / 2, model.y - model.scale_y / 2, model.scale_x, model.scale_y, cameras["world"].x - 1280 / 2, cameras["world"].y - 720 / 2, 1280, 720):
+            #     rm.textures[model.texture].use()
+            #     # glUseProgram(shaders[model.shader].program)
+            #     # glUniform1i(glGetUniformLocation(shaders[model.shader].program, "texture_image"), 0)
+            #     # glUniformMatrix4fv(glGetUniformLocation(shaders[model.shader].program, "view"), 1, GL_FALSE, cameras["world"].view_matrix)
+            #     glUniformMatrix4fv(glGetUniformLocation(rm.shaders[model.shader].program, "model"), 1, GL_FALSE, model.model_matrix)
+            #     # glUniformMatrix4fv(glGetUniformLocation(shaders[model.shader].program, "projection"), 1, GL_FALSE, get_window().projection_matrix)
+            #     glBindVertexArray(rm.meshes[model.mesh].vao)
+            #     glDrawArrays(GL_TRIANGLES, 0, rm.meshes[model.mesh].vertex_count)
 
 
-
-        # with cameras["world"]:
-        #     batch.draw()
+def collision_rect_rect(r1x, r1y, r1w, r1h, r2x, r2y, r2w, r2h):
+        # are the sides of one rectangle touching the other?
+        return (r1x + r1w >= r2x and # r1 right edge past r2 left
+                r1x <= r2x + r2w and # r1 left edge past r2 right
+                r1y + r1h >= r2y and # r1 top edge past r2 bottom
+                r1y <= r2y + r2h)     # r1 bottom edge past r2 top

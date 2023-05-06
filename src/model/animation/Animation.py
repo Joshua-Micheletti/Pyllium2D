@@ -16,8 +16,8 @@ class Frame():
 
 
 class Animation(Model):
-    def __init__(self, mesh = "", texture = "", shader = "", body = "", mesh_obj = None, texture_obj = None):
-        super().__init__(mesh, texture, shader, body, mesh_obj, texture_obj)
+    def __init__(self, mesh = "", texture = "", shader = "", mesh_obj = None, texture_obj = None, rendering_order = 0):
+        super().__init__(mesh, texture, shader, mesh_obj, texture_obj, rendering_order)
 
         self.mesh_obj = mesh_obj
         self.texture_obj = texture_obj

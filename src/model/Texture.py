@@ -95,6 +95,14 @@ class TextureSheet(Texture):
         else:
             return(False)
 
+    def get_index_uv(self, index):
+        coords = (int(index / self.rows), index % self.columns)
+
+        if coords in self.valid_tiles:
+            return((coords[1] / self.columns, coords[0] / self.rows))
+        else:
+            return(False)
+
     def get_size(self):
         return((self.tile_width, self.tile_height))
 

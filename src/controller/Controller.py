@@ -23,8 +23,8 @@ class Controller:
 
         self.states["display_bounding_box"] = False
 
-        self.player_movement_speed = 50
-        self.player_jumping_strength = 30
+        self.player_movement_speed = 1000
+        self.player_jumping_strength = 1000
         self.camera_movement_speed = 40
 
         self.can_jump = True

@@ -3,11 +3,10 @@ import numpy as np
 import pyrr
 
 class Model:
-    def __init__(self, mesh = "", texture = "", shader = "", body = "", mesh_obj = None, texture_obj = None):
+    def __init__(self, mesh = "", texture = "", shader = "", mesh_obj = None, texture_obj = None, rendering_order = 0):
         self.mesh = mesh
         self.texture = texture
         self.shader = shader
-        self.body = body
 
         self.x = 0
         self.y = 0
@@ -22,6 +21,8 @@ class Model:
         self.model_matrix = Matrix44.identity()
         self.translation_matrix = Matrix44.identity()
         self.scale_matrix = Matrix44.identity()
+
+        self.rendering_order = rendering_order
 
         if mesh_obj is not None:
             self.set_mesh(mesh, mesh_obj)
@@ -56,6 +57,8 @@ class Model:
         self.y += y
         self.calculate_model_matrix()
 
+        return(self)
+
     def scale(self, x, y):
         if x == self.scale_x and y == self.scale_y:
             return
@@ -68,6 +71,18 @@ class Model:
 
         self.calculate_model_matrix()
 
+        return(self)
+
+    def scale_by(self, x, y):
+        if x == 1 and y == 1:
+            return
+
+        self.scale(self.scale_x * x, self.scale_y * y)
+
+        return(self)
+
+
+
     def place(self, x, y):
         if x == self.x and y == self.y:
             return
@@ -76,4 +91,4 @@ class Model:
         self.y = y
         self.calculate_model_matrix()
 
-
+        return(self)

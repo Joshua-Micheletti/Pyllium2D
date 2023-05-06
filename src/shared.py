@@ -4,6 +4,7 @@ physics_world = None
 window = None
 controller = None
 renderer = None
+resource_manager = None
 
 models = dict()
 meshes = dict()
@@ -12,6 +13,8 @@ textures = dict()
 cameras = dict()
 
 entities = dict()
+
+world = []
 
 batch = pyglet.graphics.Batch()
 
@@ -46,3 +49,19 @@ def get_renderer():
 def set_renderer(obj):
     global renderer
     renderer = obj
+
+def get_world():
+    global world
+    return world
+
+def set_world(obj):
+    global world
+    world = obj
+
+def get_resource_manager():
+    global resource_manager
+    return resource_manager
+
+def set_resource_manager(obj):
+    global resource_manager
+    resource_manager = obj

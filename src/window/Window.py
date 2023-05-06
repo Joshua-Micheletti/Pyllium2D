@@ -29,8 +29,11 @@ class Window():
 
         self.projection_matrix = Matrix44.orthogonal_projection(-width/2, width/2, -height/2, height/2, -1, 1)
 
-        glfw.set_key_callback(self.window, key_callback);
+        self.width = width
+        self.height = height
 
+        glfw.set_key_callback(self.window, key_callback);
+        glfw.set_framebuffer_size_callback(self.window, framebuffer_size_callback);
 
 
 
@@ -40,6 +43,12 @@ def key_callback(window, key, scancode, action, mods):
     if action == glfw.RELEASE:
         get_controller().handle_key_release(key, mods)
 
+
+def framebuffer_size_callback(window, width, height):
+    gl.glViewport(0, 0, width, height);
+    get_window().width = width
+    get_window().height = height
+    get_window().projection_matrix = Matrix44.orthogonal_projection(-width/2, width/2, -height/2, height/2, -1, 1)
 
 
     # def __init__(self, width = 1280, height = 720, resizable = True, min_w = 400, min_h = 300, max_w = 1920, max_h = 1080, renderer = Renderer(), controller = Controller()):

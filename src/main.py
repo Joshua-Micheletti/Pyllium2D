@@ -1,4 +1,5 @@
 from renderer.Renderer import *
+from renderer.ResourceManager import ResourceManager
 from controller.Controller import Controller
 from scene import load_scene
 from PysicsWorld.PysicsWorld import PhysicsWorld
@@ -13,9 +14,13 @@ from model.animation.Animation import Animation
 
 import time
 
+import math
+
 def main():
     tick = 1 / 60
+    print_tick = 1 / 1
     last_update = time.time()
+    last_print = time.time()
 
     window = Window(1280, 720, "Pyllium")
     set_window(window)
@@ -24,10 +29,15 @@ def main():
     controller = Controller()
     renderer = Renderer()
     physics_world = PhysicsWorld()
+    physics_world.gravity = 10
+    physics_world.friction = 2
+
+    resource_manager = ResourceManager()
 
     set_controller(controller)
     set_renderer(renderer)
     set_physics_world(physics_world)
+    set_resource_manager(resource_manager)
 
     load_scene()
 
@@ -39,44 +49,49 @@ def main():
 
         if starting_time > last_update + tick:
             last_update += tick
-            get_physics_world().update(1)
+            get_controller().update()
+            get_physics_world().update()
             update_entities()
 
-        get_controller().update()
-        get_renderer().render()
 
-        finish_time = time.time()
-        elapsed_time = finish_time - starting_time
+        get_renderer().render()
 
         # Swap front and back buffers
         glfw.swap_buffers(get_window().window)
         # Poll for and process events
         glfw.poll_events()
 
-        # if elapsed_time != 0:
-        #     print(1 / elapsed_time)
-        # else:
-        #     print("inf")
+
+        if starting_time > last_print + print_tick:
+            last_print += print_tick
+
+            finish_time = time.time()
+            elapsed_time = finish_time - starting_time
+
+            if elapsed_time != 0:
+                print(f"FPS: {math.trunc(1 / elapsed_time)}  FT: {math.trunc(elapsed_time * 100000) / 100}")
+            else:
+                print("inf")
 
     glfw.terminate()
 
 
 def update_entities():
     physics_bodies = get_physics_world().physics_bodies
+    rm = get_resource_manager()
 
-    for model in models.values():
+    for model in rm.models.values():
         if isinstance(model, Animation):
             model.update()
 
     for entity in entities.values():
         if entity.body != "" and entity.model != "":
-            models[entity.model].place(physics_bodies[entity.body].x + physics_bodies[entity.body].width / 2, physics_bodies[entity.body].y + physics_bodies[entity.body].height / 2)
-
-            entity.update(models[entity.model], physics_bodies[entity.body])
+            rm.models[entity.model].place(physics_bodies[entity.body].x + physics_bodies[entity.body].width / 2, physics_bodies[entity.body].y + physics_bodies[entity.body].height / 2)
+            entity.update(rm.models[entity.model], physics_bodies[entity.body])
 
     if isinstance(cameras["world"], FollowCamera):
-        target_x = models[entities[cameras["world"].target].model].x
-        target_y = models[entities[cameras["world"].target].model].y
+        target_x = rm.models[entities[cameras["world"].target].model].x
+        target_y = rm.models[entities[cameras["world"].target].model].y
 
         cameras["world"].follow(target_x, target_y)
 

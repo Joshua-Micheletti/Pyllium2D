@@ -4,6 +4,7 @@ class Entity:
         self.states = dict()
         self.model = model
         self.body = body
+        self.movement_speed_threshold = 0.4
 
     def update(self, model = "", body = ""):
         pass
@@ -26,7 +27,7 @@ class Player(Entity):
         self.current_right = True
 
     def update(self, model, body):
-        if body.speed[0] < 0.1 and body.speed[0] > -0.1:
+        if body.speed[0] < self.movement_speed_threshold and body.speed[0] > -self.movement_speed_threshold:
             self.states["moving"] = False
         else:
             self.states["moving"] = True

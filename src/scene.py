@@ -7,55 +7,53 @@ from entity.Entity import Entity, Player
 from camera.Camera import Camera, FollowCamera
 from model.animation.Animation import Animation
 from structure.Structure import Structure
+from renderer.ResourceManager import ResourceManager
 
 import random
 
 def load_scene():
-    world = []
+    rm = get_resource_manager()
 
-    tile_size = 16
+    rm.add_shader("basic", "../shader/basic/basic_vert.c", "../shader/basic/basic_frag.c")
 
-    for i in range(200):
-        world.append([])
-        for j in range(200):
-            world[i].append(-1)
+    rm.add_mesh("square", "square")
+    rm.add_mesh("base_mesh", "square")
+    rm.add_mesh("tile_mesh", "square")
 
-    shaders["basic"] = Shader("../shader/basic/basic_vert.c", "../shader/basic/basic_frag.c")
+    rm.add_texture("test", "../res/texture/background.png")
+    rm.add_texturesheet("player", "../res/texture/gally.png", 10, 3)
+    rm.add_texturesheet("tilemap", "../res/structure/Assets.png", 25, 25)
 
-    meshes["square"] = SquareMesh()
-    meshes["base_mesh"] = SquareMesh()
-
-    textures["test"] = Texture("../res/texture/background.png")
-
-    textures["player"] = TextureSheet("../res/texture/gally.png", 10, 3)
-
-    models["player"] = Animation("square", "player", "basic", "player", meshes["square"], textures["player"])
-    models["player"].play_animation(9)
-    models["player"].scale(models["player"].scale_x * 3, models["player"].scale_y * 3)
-
-    models["floor"] = Model("base_mesh", "test", "basic", "floor", meshes["square"], textures["test"])
-    models["floor"].scale(2000, 10)
-    models["floor"].place(0, -100)
-
-    for i in range(0):
-        meshes["test_" + str(i)] = SquareMesh()
-        models["test_" + str(i)] = Animation("test_" + str(i), "player", "basic", "", meshes["test_" + str(i)], textures["player"])
-        models["test_" + str(i)].place(random.randint(-600, 600) , random.randint(-300, 300))
-        models["test_" + str(i)].play_animation(9)
-
-        entities["test_" + str(i)] = Entity("test_" + str(i))
+    rm.add_model(name="player", type="animation", mesh="square", texture="player", shader="basic", rendering_order=2).scale_by(3, 3)
+    rm.add_model("floor", "static", "base_mesh", "test", "basic", 0).scale(2000, 10).place(0, -100)
 
     physics_world = get_physics_world()
 
-    physics_world.add_body("player", models["player"].x - models["player"].width / 2, models["player"].y - models["player"].height / 2, models["player"].width, models["player"].height, mass = 1, moving = True)
-    physics_world.add_body("floor", models["floor"].x - models["floor"].width / 2, models["floor"].y - models["floor"].height / 2, models["floor"].width, models["floor"].height, 1, False)
+    physics_world.add_body("player", rm.models["player"].x - rm.models["player"].width / 2, rm.models["player"].y - rm.models["player"].height / 2, rm.models["player"].width, rm.models["player"].height, mass = 1, moving = True)
+    physics_world.add_body("floor", rm.models["floor"].x - rm.models["floor"].width / 2, rm.models["floor"].y - rm.models["floor"].height / 2, rm.models["floor"].width, rm.models["floor"].height, 1, False)
 
     set_physics_world(physics_world)
 
     entities["player"] = Player("player", "player")
+    entities["floor"] = Entity("floor", "floor")
 
     cameras["world"] = FollowCamera("player")
 
-
     structure = Structure("../res/structure/tree.str")
-    print(structure.cells)
+
+    world = get_world()
+    world = []
+
+    tile_size = 64
+
+    for i in range(25):
+        world.append([])
+        for j in range(25):
+            world[i].append(j * 25 + i)
+            uvs = rm.textures["tilemap"].get_uv(j, i)
+            if uvs != False:
+                rm.add_mesh("tile_mesh_" + str(i) + "_" + str(j), "square").set_uv(uvs[0], uvs[1], rm.textures["tilemap"].tile_uv_width, rm.textures["tilemap"].tile_uv_height)
+                rm.add_model("tile_" + str(i) + "_" + str(j), "static", "tile_mesh_" + str(i) + "_" + str(j), "tilemap", "basic", 1).place(i * tile_size, j * tile_size).scale_by(4, 4)
+
+    set_world(world)
+    set_resource_manager(rm)
