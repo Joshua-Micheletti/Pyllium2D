@@ -1,2 +1,2 @@
-pip install pyglet
 pip install termcolor
+pip install -i https://test.pypi.org/simple/ PysicsWorld
