@@ -99,7 +99,7 @@ class TextureSheet(Texture):
         coords = (int(index / self.rows), index % self.columns)
 
         if coords in self.valid_tiles:
-            return((coords[1] / self.columns, coords[0] / self.rows))
+            return(((coords[1] / self.columns, 1 - (coords[0] / self.rows))))
         else:
             return(False)
 

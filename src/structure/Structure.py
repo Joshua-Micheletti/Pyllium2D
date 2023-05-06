@@ -26,5 +26,8 @@ class Structure:
         self.height = line_count
         self.cells.reverse()
 
+        # for i in range(len(self.cells)):
+        #     self.cells[i].reverse()
+
     def get_tile(self, x, y):
         return(self.cells[x][y])

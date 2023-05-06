@@ -44,16 +44,29 @@ def load_scene():
     world = get_world()
     world = []
 
-    tile_size = 64
-
     for i in range(25):
         world.append([])
         for j in range(25):
-            world[i].append(j * 25 + i)
-            uvs = rm.textures["tilemap"].get_uv(j, i)
-            if uvs != False:
-                rm.add_mesh("tile_mesh_" + str(i) + "_" + str(j), "square").set_uv(uvs[0], uvs[1], rm.textures["tilemap"].tile_uv_width, rm.textures["tilemap"].tile_uv_height)
-                rm.add_model("tile_" + str(i) + "_" + str(j), "static", "tile_mesh_" + str(i) + "_" + str(j), "tilemap", "basic", 1).place(i * tile_size, j * tile_size).scale_by(4, 4)
+            world[i].append(((25 - j) * 25) + i)
+
+    for i in range(len(structure.cells)):
+        for j in range(len(structure.cells[i])):
+            world[i][j] = structure.cells[i][j]
+
+    print(world)
+
+    tile_size = 64
+
+    for i in range(len(world)):
+        for j in range(len(world[i])):
+            if world[i][j] != -1:
+                uvs = rm.textures["tilemap"].get_index_uv(world[i][j])
+                if uvs != False:
+                    rm.add_mesh("tile_mesh_" + str(i) + "_" + str(j), "square").set_uv(uvs[0], uvs[1], rm.textures["tilemap"].tile_uv_width, rm.textures["tilemap"].tile_uv_height)
+                    rm.add_model("tile_" + str(i) + "_" + str(j), "static", "tile_mesh_" + str(i) + "_" + str(j), "tilemap", "basic", 1)
+                    # print(rm.models["tile_" + str(i) + "_" + str(j)])
+                    rm.models["tile_" + str(i) + "_" + str(j)].place(i * tile_size, (len(world[i]) - j) * tile_size)
+                    rm.models["tile_" + str(i) + "_" + str(j)].scale_by(4, 4)
 
     set_world(world)
     set_resource_manager(rm)
