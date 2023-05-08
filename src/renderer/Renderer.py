@@ -12,7 +12,6 @@ class Renderer():
         glClear(GL_COLOR_BUFFER_BIT)
         rm = get_resource_manager()
 
-
         for order in rm.rendering_buffer.keys():
             for shader in rm.rendering_buffer[order].keys():
                 if shader == "basic":

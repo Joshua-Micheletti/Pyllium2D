@@ -14,7 +14,7 @@ cameras = dict()
 
 entities = dict()
 
-world = []
+world = None
 
 batch = pyglet.graphics.Batch()
 

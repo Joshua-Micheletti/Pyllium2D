@@ -85,7 +85,7 @@ def update_entities():
             model.update()
 
     for entity in entities.values():
-        if entity.body != "" and entity.model != "":
+        if entity.body != "" and entity.model != "" and physics_bodies[entity.body].movable:
             rm.models[entity.model].place(physics_bodies[entity.body].x + physics_bodies[entity.body].width / 2, physics_bodies[entity.body].y + physics_bodies[entity.body].height / 2)
             entity.update(rm.models[entity.model], physics_bodies[entity.body])
 
